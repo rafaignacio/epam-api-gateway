@@ -1,0 +1,93 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/items",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/api/catalog/items",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Key": "Items"
+    },
+    {
+      "DownstreamPathTemplate": "/items/1/properties",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/api/catalog/items/{id}/properties",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Key": "ItemProperties"
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "FileCacheOptions": {
+        "TtlSeconds": 60
+      },
+      "UpstreamPathTemplate": "/api/catalog/{everything}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/api/catalog/{everything}",
+      "UpstreamHttpMethod": [ "POST", "DELETE", "PATCH" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [
+          "catalog:items:create",
+          "catalog:categories:read",
+          "catalog:items:read",
+          "catalog:categories:update",
+          "catalog:categories:create",
+          "catalog:items:delete",
+          "catalog:items:update",
+          "catalog:categories:delete"
+        ],
+        "AllowedRoles": [ "manager" ]
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/carts/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "DELETE", "PATCH" ]
+    }
+  ],
+  "Aggregates": [
+    {
+      "RouteKeys": [
+        "Items",
+        "ItemProperties"
+      ],
+      "UpstreamPathTemplate": "/detailed-items",
+      "Aggregator": "CatalogItemAggregator"
+    }
+  ]
+}
